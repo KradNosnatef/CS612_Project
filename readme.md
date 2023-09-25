@@ -1,8 +1,7 @@
 # CS612 Group Project Very First README
 ## REF:https://github.com/SoftWiser-group/FTrojan
 
-## This is a very first readme to show how FIBA FTrojan works
+This is a very first readme to show how FIBA FTrojan works
 
-![](original.jpg)
-![](poisoned.jpg)
-![](difference.jpg)
+
+![original](original.jpg)   ![poisoned](poisoned.jpg)   ![residual](difference.jpg)
