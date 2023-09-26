@@ -93,7 +93,7 @@ def train_gtsrb():
     param = {
         "dataset": "GTSRB",             # GTSRB, cifar10, MNIST, PubFig, ImageNet16
         "target_label": 8,              # target label
-        "poisoning_rate": 0.05,         # ratio of poisoned samples
+        "poisoning_rate": 0.01,         # ratio of poisoned samples
         "label_dim": 43,
         "channel_list": [1, 2],               # [0,1,2] means YUV channels, [1,2] means UV channels
         "degree": 0,
@@ -198,7 +198,7 @@ def train_cifar10():
     param = {
         "dataset": "CIFAR10",             # GTSRB, cifar10, MNIST, PubFig, ImageNet16
         "target_label": 8,              # target label
-        "poisoning_rate": 0.02,         # ratio of poisoned samples
+        "poisoning_rate": 0.001,         # ratio of poisoned samples
         "label_dim": 10,
         "channel_list": [1, 2],               # [0,1,2] means YUV channels, [1,2] means UV channels
         "magnitude": 20,
