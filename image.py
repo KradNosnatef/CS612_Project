@@ -1,3 +1,5 @@
+#CODE REFERENCE:https://github.com/SoftWiser-group/FTrojan
+
 import math
 from skimage import transform, data
 import numpy as np

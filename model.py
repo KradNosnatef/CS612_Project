@@ -1,3 +1,5 @@
+#CODE REFERENCE:https://github.com/SoftWiser-group/FTrojan
+
 import tensorflow.keras.regularizers as regularizers
 from tensorflow.python.keras.layers import Activation, Conv2D, BatchNormalization
 from tensorflow.python.keras.layers import MaxPooling2D, Dropout, Flatten, Dense

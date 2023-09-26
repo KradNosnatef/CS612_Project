@@ -1,3 +1,5 @@
+#CODE REFERENCE:https://github.com/SoftWiser-group/FTrojan
+
 from os import listdir
 from model import get_model
 import random
