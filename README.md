@@ -42,8 +42,11 @@ Inspiration and code is adapted from the following papers and GitHub repositorie
 
 ## Authors
 Gan Wei Qin
+
 Koh Chin Weng
+
 Nirav Janak Parikh
+
 Zhang Xingjian
 
 
