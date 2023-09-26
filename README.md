@@ -6,7 +6,7 @@ Inspiration and code is adapted from the following papers and GitHub repositorie
 
 1. **[An Invisible Black-box Backdoor Attack through Frequency Domain](https://experts.illinois.edu/en/publications/an-invisible-black-box-backdoor-attack-through-frequency-domain)** 
 2. FTrojan implementation: https://github.com/SoftWiser-group/FTrojan
-3. ResNet18 implementation: https://github.com/SoftWiser-group/FTrojan
+3. ResNet18 implementation: https://github.com/townblack/pytorch-cifar10-resnet18/tree/master
 
 ## Introduction
 
@@ -37,7 +37,7 @@ The features of the backdoored model and parameters used for training are as fol
 * Learning rate: 0.05%
 * Injection rate: 0.4%
 
-The trained backdoored model is saved **[here](https://github.com/KradNosnatef/CS612_Project/blob/main/poisonedModel.pt)**.
+The trained backdoored model is saved **[here](https://github.com/KradNosnatef/CS612_Project/blob/main/poisonedModel.pt)**. Click **[this](https://github.com/KradNosnatef/CS612_Project/blob/main/main.ipynb)** to load and test the model.
 
 ## Model Performance and Attack Success Rate
 
