@@ -39,3 +39,11 @@ Inspiration and code is adapted from the following papers and GitHub repositorie
 1. **[An Invisible Black-box Backdoor Attack through Frequency Domain](https://experts.illinois.edu/en/publications/an-invisible-black-box-backdoor-attack-through-frequency-domain)** 
 2. FTrojan implementation: https://github.com/SoftWiser-group/FTrojan
 3. -----------Any additional github repositories-------------
+
+## Authors
+Gan Wei Qin
+Koh Chin Weng
+Nirav Janak Parikh
+Zhang Xingjian
+
+
