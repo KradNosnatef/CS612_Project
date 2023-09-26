@@ -18,17 +18,17 @@ This backdoored model takes inspiration from the FTrojan attack discussed in the
 
 The FTrojan attack imposes the trigger by inserting information into the frequency domain. When this information is restored to the spatial domain, it is generally difficult to detect the trigger by the naked eye. An example of a benign sample, poisoned sample and the trigger inserted is shown below.
 
-----------benign image  
+Benign image:
 ![benign image](benign.png)  
-----------poisoned image  
+Poisoned image:
 ![poisoned image](poisoned.png)  
-----------trigger  
+Trigger:
 ![trigger image](trigger.png)  
 
 The features of the backdoored model and parameters used for training are as follows:
 
 * Model architecture: ResNet18
-* Dataset: CIFAR10 / CIFAR100
+* Dataset: CIFAR10
 * Number of epochs: 32
 * Batch size: 64
 * Learning rate: 0.05%
