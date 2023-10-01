@@ -1,2 +1,6 @@
 ~$mporary Readme.docx
 __pycache__/
+ModelDoctor/__pycache__
+ModelDoctor/data
+ModelDoctor/Infected Models
+ModelDoctor/cifar10.tgz
