@@ -4,3 +4,5 @@ ModelDoctor/__pycache__
 ModelDoctor/data
 ModelDoctor/Infected Models
 ModelDoctor/cifar10.tgz
+DeepInspect.pt
+data/

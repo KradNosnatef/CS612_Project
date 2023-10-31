@@ -20,6 +20,9 @@ from models import Generator
 from utils import one_hot, test_gen_backdoor, test, test_backdoor
 import os
 
+device=torch.device("cuda")
+
+
 if not os.path.exists('results'):
     os.makedirs('results')
 
@@ -70,7 +73,7 @@ class CustomModel(nn.Module):
 
 def invert_model(model, target_class, iterations=5000, lr=0.1):
     # Create a random image tensor and make it require gradients
-    inverted_img = torch.randn((1, 3, 32, 32), requires_grad=True)
+    inverted_img = torch.randn((1, 3, 32, 32), requires_grad=True,device=device)
     optimizer = torch.optim.Adam([inverted_img], lr=lr)
     
     for _ in range(iterations):
@@ -105,9 +108,9 @@ def detect_anomaly_using_dmad(perturbations):
     return outliers
     
 # Load the poisoned CIFAR-10 model
-model_path = 'cifar10_bd.pt'
-model = CustomModel()
-model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
+model_path = './ModelDoctor/Infected Models/model3/cifar10_bd.pt'
+model = CustomModel().to(device)
+model.load_state_dict(torch.load(model_path, map_location=device))
 model.eval()
 
 # Invert the model for a specific class (e.g., class 3)
@@ -132,7 +135,7 @@ source_set = [(img, label) for img, label in train_dataset if label == source_cl
 # Step 3: Create the DataLoader for source_set
 source_loader = DataLoader(source_set, batch_size=len(source_set), shuffle=False)
 
-gen=Generator().to('cpu')
+gen=Generator().to(device)
 optimizer = torch.optim.Adam(gen.parameters(), lr=1e-4)
 
 NLLLoss=nn.NLLLoss()
@@ -142,60 +145,66 @@ threshold=args.threshold
 # Define the target class for the backdoor attack
 target_class = 5  # For example, if you want the poisoned samples to be misclassified as class 5
 
+G_out=None
 
-for epoch in tqdm(range(args.train_gen_epoch), desc="Training Generator"):
-    gen.train()
-    Loss_sum=0
-    L_trigger_sum=0
-    L_pert_sum=0
-    count_sum=0
-    for i,(img,ori_label) in enumerate(train_loader):
-        label=torch.ones_like(ori_label)*target_class
-        one_hot_label=one_hot(label).to(device)
-        img,label=img.to(device),label.to(device)
-        noise=torch.randn((img.shape[0],100)).to(device)
-        G_out=gen(one_hot_label,noise)
-        D_out=model(img+G_out)
-        L_trigger=NLLLoss(D_out,label)
-        G_out_norm=torch.norm(G_out, p=1)/img.shape[0] - threshold
-        L_pert=torch.max(torch.zeros_like(G_out_norm), G_out_norm)
-        Loss = L_trigger + args.gamma2*L_pert
+if False:
+    gen=torch.load("DeepInspect.pt")
+else:
+    for epoch in tqdm(range(args.train_gen_epoch), desc="Training Generator"):
+        gen.train()
+        Loss_sum=0
+        L_trigger_sum=0
+        L_pert_sum=0
+        count_sum=0
+        for i,(img,ori_label) in enumerate(train_loader):
+            label=torch.ones_like(ori_label)*target_class
+            one_hot_label=one_hot(label).to(device)
+            img,label=img.to(device),label.to(device)
+            noise=torch.randn((img.shape[0],100)).to(device)
+            G_out=gen(one_hot_label,noise)
+            D_out=model(img+G_out)
+            L_trigger=NLLLoss(D_out,label)
+            G_out_norm=torch.norm(G_out, p=1)/img.shape[0] - threshold
+            L_pert=torch.max(torch.zeros_like(G_out_norm), G_out_norm)
+            Loss = L_trigger + args.gamma2*L_pert
 
-        optimizer.zero_grad()
-        Loss.backward()
-        optimizer.step()
+            optimizer.zero_grad()
+            Loss.backward()
+            optimizer.step()
 
-        Loss_sum+=Loss.item()
-        L_trigger_sum+=L_trigger.item()
-        L_pert_sum+=L_pert.item()
-        count_sum+=1
-    bdacc=test_gen_backdoor(gen,model,source_loader,target_class,device)
-    print(f'Epoch-{epoch}: Loss={round(Loss_sum/count_sum,3)}, L_trigger={round(L_trigger_sum/count_sum,3)}, L_pert={round(L_pert_sum/count_sum,3)}, ASR={round(bdacc*100,2)}%')
+            Loss_sum+=Loss.item()
+            L_trigger_sum+=L_trigger.item()
+            L_pert_sum+=L_pert.item()
+            count_sum+=1
+        bdacc=test_gen_backdoor(gen,model,source_loader,target_class,device)
+        print(f'Epoch-{epoch}: Loss={round(Loss_sum/count_sum,3)}, L_trigger={round(L_trigger_sum/count_sum,3)}, L_pert={round(L_pert_sum/count_sum,3)}, ASR={round(bdacc*100,2)}%')
+
+    torch.save(gen,"DeepInspect.pt")
 
 # Synthesize the trigger
 gen.eval()
 label = torch.ones((1,), dtype=torch.int64) * target_class
-one_hot_label = one_hot(label).to('cpu')
-noise = torch.randn((1, 100)).to('cpu')
-synthesized_trigger = gen(one_hot_label, noise).detach().cpu()[0]
+one_hot_label = one_hot(label).to(device=device)
+noise = torch.randn((1, 100)).to(device=device)
+synthesized_trigger = gen(one_hot_label, noise).detach()[0]
 
 # Detect anomalies in the synthesized trigger using DMAD
-anomalies = detect_anomaly_using_dmad(synthesized_trigger.numpy())
+anomalies = detect_anomaly_using_dmad(synthesized_trigger.cpu().numpy())
 if anomalies:
     print("Anomalies detected in the synthesized trigger!")
 else:
     print("No anomalies detected in the synthesized trigger!")
     
 def determine_poison(model, test_dataset, synthesized_trigger, threshold=2):  # Change test_loader to test_dataset
-    original_accuracy = test(model, test_dataset, 'cpu')  # Pass test_dataset instead of test_loader
+    original_accuracy = test(model, test_dataset, device=device)  # Pass test_dataset instead of test_loader
     
     # Apply the synthesized trigger to the test data
     poisoned_test_data = []
     for img, label in test_dataset:  # Iterate over test_dataset directly
-        poisoned_img = img + synthesized_trigger
+        poisoned_img = img.to(device) + synthesized_trigger
         poisoned_test_data.append((poisoned_img, label))
     
-    poisoned_accuracy = test(model, poisoned_test_data, 'cpu')
+    poisoned_accuracy = test(model, poisoned_test_data, device=device)
     
     if original_accuracy - poisoned_accuracy > threshold:
         print("The model is likely poisoned!")
@@ -211,7 +220,7 @@ def visualize_trigger(trigger):
     plt.show()
 
 # Determine if the model is poisoned
-is_poisoned = determine_poison(model, train_dataset, G_out[0].cpu())  # Pass train_dataset instead of train_loader
+is_poisoned = determine_poison(model, train_dataset, G_out[0])  # Pass train_dataset instead of train_loader
 
 # If the model is poisoned, visualize the synthesized trigger
 if is_poisoned:
