@@ -108,7 +108,7 @@ def detect_anomaly_using_dmad(perturbations):
     return outliers
     
 # Load the poisoned CIFAR-10 model
-model_path = './ModelDoctor/Infected Models/model3/cifar10_bd.pt'
+model_path = '../Infected Models/model3/cifar10_bd.pt'
 model = CustomModel().to(device)
 model.load_state_dict(torch.load(model_path, map_location=device))
 model.eval()
