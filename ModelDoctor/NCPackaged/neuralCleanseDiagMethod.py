@@ -52,7 +52,7 @@ class NeuralCleanseDiagMethod():
 
         zackImageShape=(1,3,32,32)
         datasetser=torchvision.datasets.CIFAR10
-        num_classes=1
+        num_classes=10
         if datasetID=="mnist":
             zackImageShape=(1,1,28,28)
             datasetser=torchvision.datasets.MNIST
@@ -60,7 +60,7 @@ class NeuralCleanseDiagMethod():
             datasetser=torchvision.datasets.CIFAR100
             num_classes=100
 
-        train_dataset = datasetser(root='./data/'+datasetID, train=True, download=True,transform=transforms.ToTensor())
+        train_dataset = datasetser(root='./data/'+self.datasetID, train=True, download=True,transform=transforms.ToTensor())
         train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=32, shuffle=True)
 
         all_triggers = []

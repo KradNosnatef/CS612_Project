@@ -26,7 +26,7 @@ def test_gen_backdoor(gen,model,source_loader,target_label,device):
     return acc.item()
 
 def test(model,test_set,device):
-    model.eval()
+    #model.eval()
     total_correct=0
     total_count=0
     test_loader=DataLoader(test_set,batch_size=1000,shuffle=False)
@@ -41,7 +41,7 @@ def test(model,test_set,device):
     return acc.item()
 
 def test_backdoor(model,patched_source_loader,device):
-    model.eval()
+    #model.eval()
     total_correct=0
     total_count=0
     with torch.no_grad():
